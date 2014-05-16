@@ -15,7 +15,7 @@ module Spree
         double(
           Stock::Package,
           order: mock_model(Order),
-          contents: [Stock::Package::ContentItem.new(1,variant1, 1)]
+          contents: [Stock::Package::ContentItem.new(1,variant1, 4)]
         ) 
       }
 
@@ -23,13 +23,17 @@ module Spree
         double(
           Stock::Package,
           order: mock_model(Order),
-          contents: [Stock::Package::ContentItem.new(1,variant1, 1),
-            Stock::Package::ContentItem.new(2,variant2, 2)]
+          contents: [Stock::Package::ContentItem.new(1,variant1, 4),
+            Stock::Package::ContentItem.new(2,variant2, 6)]
         )
       }
 
       it "returns correct description" do
         expect(calculator.description).to eq 'Ohmyzip Shipping Calculator'
+      end
+
+      it "correctly calculates weight for one item" do
+        calculator.total_weight(package2).should == 2
       end
 
       it "correctly calculates weight for a package with multiple items" do
