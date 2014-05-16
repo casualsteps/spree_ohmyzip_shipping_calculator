@@ -15,7 +15,7 @@ module Spree
         double(
           Stock::Package,
           order: mock_model(Order),
-          contents: [Stock::Package::ContentItem.new(1,variant1, 4)]
+          contents: [Stock::Package::ContentItem.new(1,variant1, 1)]
         ) 
       }
 
@@ -23,8 +23,8 @@ module Spree
         double(
           Stock::Package,
           order: mock_model(Order),
-          contents: [Stock::Package::ContentItem.new(1,variant1, 4),
-            Stock::Package::ContentItem.new(2,variant2, 6)]
+          contents: [Stock::Package::ContentItem.new(1,variant1, 2),
+            Stock::Package::ContentItem.new(1,variant2, 1)]
         )
       }
 
@@ -33,23 +33,19 @@ module Spree
       end
 
       it "correctly calculates weight for one item" do
-        calculator.total_weight(package2).should == 2
+        calculator.total_weight(package.contents).should == 1
       end
 
       it "correctly calculates weight for a package with multiple items" do
-        calculator.total_weight(package2).should == 3
+        calculator.total_weight(package2.contents).should == 4
       end
 
-      it "correctly calculates shipping cost when weight is 1 lb" do
-        calculator.compute_package(package).should == 8.5
+      it "correctly calculates shipping cost with one item in package" do
+        calculator.compute_package(package).should == 8.5 # weighs 1 lb
       end
       
-      it "correctly calculates shipping cost when weight is 2 lb" do
-        calculator.compute_package(package).should == 10.5
-      end
-
-      it "correctly calculates shipping cost when weight is 3 lbs" do
-        calculator.compute_package(package2).should == 12.5
+      it "correctly calculates shipping cost with multiple items in package" do
+        calculator.compute_package(package2).should == 14.5 # weighs 4 lbs
       end
     end
   end
