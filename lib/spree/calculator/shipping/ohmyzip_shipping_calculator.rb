@@ -1,4 +1,4 @@
-class Spree::Calculator::Ohmyzip < Spree::Calculator
+class Spree::Calculator::Ohmyzip < Spree::ShippingCalculator
   preference :default_weight, :decimal, default: 1
 
   def self.description

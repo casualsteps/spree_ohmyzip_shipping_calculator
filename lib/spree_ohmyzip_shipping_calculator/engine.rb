@@ -7,7 +7,7 @@ module SpreeOhmyzipShippingCalculator
 
     initializer 'spree.register.calculators' do |app|
       require 'spree/calculator/shipping/ohmyzip_shipping_calculator'
-      app.config.spree.calculators.tax_rates << Spree::Calculator::Ohmyzip
+      app.config.spree.calculators.shipping_methods << Spree::Calculator::Ohmyzip
     end
   end
 end
