@@ -19,7 +19,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     base_price = order_contains_ilbantongwan?(package) ? 7.50 : 6.50
 
     shipping_cost = total_weight*2 + base_price
-    shipping_cost
+    Spree::CurrencyRate.find_by(:base_currency => 'USD').convert_to_won(shipping_cost).fractional
   end
 
   def total_weight(contents)

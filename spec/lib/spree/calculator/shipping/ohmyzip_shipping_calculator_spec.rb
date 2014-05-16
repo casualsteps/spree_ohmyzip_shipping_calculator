@@ -3,6 +3,9 @@ require 'spec_helper'
 module Spree
   module Calculator::Shipping
     describe Ohmyzip do
+      before do
+        Spree::CurrencyRate.create(:rate => 1050, :base_currency => 'USD', :target_currency => 'KRW')
+      end
 
       let(:calculator) { described_class.new }
 
@@ -41,11 +44,11 @@ module Spree
       end
 
       it "correctly calculates shipping cost with one item in package" do
-        calculator.compute_package(package).should == 8.5 # weighs 1 lb
+        calculator.compute_package(package).should == 8.5 * 1050 # weighs 1 lb
       end
       
       it "correctly calculates shipping cost with multiple items in package" do
-        calculator.compute_package(package2).should == 14.5 # weighs 4 lbs
+        calculator.compute_package(package2).should == 14.5 * 1050 # weighs 4 lbs
       end
     end
   end
