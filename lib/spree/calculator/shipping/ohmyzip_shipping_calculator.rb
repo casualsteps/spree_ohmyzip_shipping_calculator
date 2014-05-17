@@ -52,7 +52,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     contents.each do |item|
       weight += item.quantity * (item.variant.weight > 0.0 ? item.variant.weight / 100 : preferred_default_weight)
     end
-    (weight.to_f/100).ceil*100
+    weight.ceil
   end
 
   private
