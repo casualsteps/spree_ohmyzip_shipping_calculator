@@ -54,8 +54,8 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   def total_weight(contents)
     weight = 0
-    contents.each do |item|          
-      weight += item.quantity * (item.variant.weight > 0.0 ? item.variant.weight : preferred_default_weight)
+    contents.each do |item|
+      weight += item.quantity * (item.variant.weight > 0.0 ? item.variant.weight / 100 : preferred_default_weight)
     end
     weight
   end
@@ -64,7 +64,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   def order_contains_ilbantongwan?(contents)
     return false
     ### TODO: set up the below logic if we're selling non-fashion
-    #contents.each do |item|          
+    #contents.each do |item|
     ###check each item's category to see if it's not 목록통관
     #end
   end
