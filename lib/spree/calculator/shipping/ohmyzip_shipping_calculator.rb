@@ -22,6 +22,20 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     Spree::CurrencyRate.find_by(:base_currency => 'USD').convert_to_won(shipping_cost).fractional
   end
 
+  def compute_amount(order)
+    content_items = order.line_items
+    total_weight = total_weight(content_items)
+    base_price = order_contains_ilbantongwan?(order) ? 7.50 : 6.50
+
+    shipping_cost = total_weight*2 + base_price
+    Spree::CurrencyRate.find_by(:base_currency => 'USD').convert_to_won(shipping_cost).fractional
+  end
+
+  def display_amount(order)
+    total = compute_amount(order)
+    Spree::Money.new(total, { currency: "KRW" })
+  end
+
   def total_weight(contents)
     weight = 0
     contents.each do |item|          
