@@ -47,17 +47,12 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     Spree::Money.new(total, { currency: "KRW" })
   end
 
-  def express_shipping_charge(order)
-    preferred_express_shipping ? "3,000" : "0"
-  end
-
-
   def total_weight(contents)
     weight = 0
     contents.each do |item|
       weight += item.quantity * (item.variant.weight > 0.0 ? item.variant.weight / 100 : preferred_default_weight)
     end
-    weight
+    (weight.to_f/100).ceil*100
   end
 
   private
