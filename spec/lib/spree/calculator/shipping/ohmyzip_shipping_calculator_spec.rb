@@ -10,9 +10,9 @@ module Spree
       let(:calculator) { described_class.new }
 
       let(:variant1) { double("Variant", 
-        weight: 1, width: 1, depth: 1, height: 1, price: 4) }
+        weight: 100, width: 1, depth: 1, height: 1, price: 4) }
       let(:variant2) { double("Variant", 
-        weight: 2, width: 1, depth: 1, height: 1, price: 6) }
+        weight: 200, width: 1, depth: 1, height: 1, price: 6) }
 
       let(:package) { 
         double(
