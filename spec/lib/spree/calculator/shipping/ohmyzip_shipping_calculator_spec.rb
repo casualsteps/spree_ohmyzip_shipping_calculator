@@ -9,17 +9,17 @@ module Spree
 
       let(:calculator) { described_class.new }
 
-      let(:variant1) { double("Variant", 
+      let(:variant1) { double("Variant",
         weight: 100, width: 1, depth: 1, height: 1, price: 4) }
-      let(:variant2) { double("Variant", 
+      let(:variant2) { double("Variant",
         weight: 200, width: 1, depth: 1, height: 1, price: 6) }
 
-      let(:package) { 
+      let(:package) {
         double(
           Stock::Package,
           order: mock_model(Order),
           contents: [Stock::Package::ContentItem.new(1,variant1, 1)]
-        ) 
+        )
       }
 
       let(:package2) {
@@ -44,11 +44,11 @@ module Spree
       end
 
       it "correctly calculates shipping cost with one item in package" do
-        calculator.compute_package(package).should == 8.5 * 1050 # weighs 1 lb
+        calculator.compute_package(package).should == 8.5 # weighs 1 lb
       end
-      
+
       it "correctly calculates shipping cost with multiple items in package" do
-        calculator.compute_package(package2).should == 14.5 * 1050 # weighs 4 lbs
+        calculator.compute_package(package2).should == 14.5 # weighs 4 lbs
       end
     end
   end
