@@ -32,7 +32,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   def compute_package(package)
     content_items = package.contents
     total_weight = total_weight(content_items)
-    base_price = preferred_international_shipping_charge + order_contains_ilbantongwan?(package) ? 1.00 : 0
+    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
 
     shipping_cost = total_weight * 2 + base_price
     shipping_cost + preferred_local_shipping_charge
@@ -42,7 +42,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   def compute_amount(order)
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    base_price = preferred_international_shipping_charge + order_contains_ilbantongwan?(order) ? 1.00 : 0
+    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
 
     shipping_cost = total_weight * 2 + base_price
     shipping_cost
