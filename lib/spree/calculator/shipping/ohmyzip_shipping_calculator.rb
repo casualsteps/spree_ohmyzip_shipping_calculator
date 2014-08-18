@@ -46,7 +46,15 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
     shipping_cost = total_weight * 2 + base_price
     shipping_cost
- end
+  end
+  def compute_product_amount(product)
+    weight = 0
+    weight = product.master.weight > 0.0 ? product.master.weight / 100 : preferred_default_weight
+    weight.ceil
+    base_price = preferred_international_shipping_charge
+    shipping_cost = weight * 2 + base_price
+    shipping_cost
+  end
 
   def total_weight(contents)
     weight = 0
