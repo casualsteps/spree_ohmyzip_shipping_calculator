@@ -2,6 +2,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   preference :local_shipping_charge, :decimal, default: 0
   preference :international_shipping_charge, :decimal, default: 7.50
   preference :default_weight, :decimal, default: 1
+  preference :promotional_shipping_discount, :boolean, default: true
 
   def self.description
     "Ohmyzip Shipping Calculator"
@@ -45,6 +46,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # computes in USD – does NOT include local shipping upgrade
   def compute_amount(order)
+    return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount])
     content_items = order.line_items
     total_weight = total_weight(content_items)
     base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
@@ -52,6 +54,16 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     shipping_cost = total_weight * 2 + base_price
     shipping_cost
   end
+
+  def relaxation_shipping_amount(order)
+    content_items = order.line_items
+    total_weight = total_weight(content_items)
+    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
+
+    shipping_cost = total_weight * 2 + base_price
+    shipping_cost
+  end
+
   def compute_product_amount(product)
     weight = 0
     weight = product.master.weight > 0.0 ? product.master.weight / 100 : preferred_default_weight
