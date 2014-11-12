@@ -36,7 +36,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # computes in USD
   def compute_package(package)
-    return 0 if (package.contents.length > 1 and preferences[:promotional_shipping_discount])
+    return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount])
     content_items = package.contents
     total_weight = total_weight(content_items)
     base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
