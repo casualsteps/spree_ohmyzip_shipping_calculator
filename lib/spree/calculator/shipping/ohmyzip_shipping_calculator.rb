@@ -13,8 +13,8 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
 
-  def local_shipping_amount
-    preferred_local_shipping_charge
+  def local_shipping_amount(order)
+    BigDecimal.new(order.check_for_gap_banana_products? ? 7 : 0)
   end
   def display_string_local_shipping_amount amount = 0
     presentation_currency = Spree::Config[:presentation_currency] if Spree::Config[:presentation_currency] != nil
@@ -42,7 +42,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
 
     shipping_cost = total_weight * 2 + base_price
-    shipping_cost + preferred_local_shipping_charge
+    shipping_cost + local_shipping_amount(package.order)
   end
 
   # computes in USD – does NOT include local shipping upgrade
