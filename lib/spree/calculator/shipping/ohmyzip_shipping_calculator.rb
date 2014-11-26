@@ -37,7 +37,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   # computes in USD
   def compute_package(package)
     #return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount] and package.order.completed_at and package.order.completed_at >= Date.parse('2014-11-23'))
-    return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]
+    return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount])
     content_items = package.contents
     total_weight = total_weight(content_items)
     base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
@@ -49,7 +49,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   # computes in USD – does NOT include local shipping upgrade
   def compute_amount(order)
     #return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount] and order.completed_at and order.completed_at >= Date.parse('2014-11-23'))
-    return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount]
+    return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount])
     content_items = order.line_items
     total_weight = total_weight(content_items)
     base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
