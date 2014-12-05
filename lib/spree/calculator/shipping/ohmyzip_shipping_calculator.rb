@@ -16,6 +16,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   def local_shipping_amount
     preferred_local_shipping_charge
   end
+
   def display_string_local_shipping_amount amount = 0
     presentation_currency = Spree::Config[:presentation_currency] if Spree::Config[:presentation_currency] != nil
     @rate = if @rate then @rate else Spree::CurrencyRate.find_by(target_currency: presentation_currency) end
@@ -66,9 +67,13 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   def compute_product_amount(product)
-    weight = 0
-    weight = product.master.weight > 0.0 ? product.master.weight / 100 : preferred_default_weight
+    if product.variants.present?
+      weight = product.variants.maximum(:weight)
+    else
+      weight = product.master.weight > 0.0 ? product.master.weight / 100 : preferred_default_weight
+    end
     weight.ceil
+
     base_price = preferred_international_shipping_charge
     shipping_cost = weight * 2 + base_price
     shipping_cost
@@ -83,6 +88,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   private
+
   def order_contains_ilbantongwan?(contents)
     return false
     ### TODO: set up the below logic if we're selling non-fashion
