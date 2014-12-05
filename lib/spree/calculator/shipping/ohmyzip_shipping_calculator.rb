@@ -73,7 +73,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
       weight = product.master.weight
     end
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
-    weight.ceil
+    weight = weight.ceil
 
     base_price = preferred_international_shipping_charge
     shipping_cost = weight * 2 + base_price
