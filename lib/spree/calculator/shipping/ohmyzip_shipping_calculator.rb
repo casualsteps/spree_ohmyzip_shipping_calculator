@@ -70,8 +70,9 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     if product.variants.present?
       weight = product.variants.maximum(:weight)
     else
-      weight = product.master.weight > 0.0 ? product.master.weight / 100 : preferred_default_weight
+      weight = product.master.weight
     end
+    weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight.ceil
 
     base_price = preferred_international_shipping_charge
