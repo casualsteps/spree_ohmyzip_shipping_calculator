@@ -1,6 +1,5 @@
 class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   preference :local_shipping_charge, :decimal, default: 0
-  preference :international_shipping_charge, :decimal, default: 7.50
   preference :default_weight, :decimal, default: 1
   preference :promotional_shipping_discount, :boolean, default: true
 
@@ -12,6 +11,15 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     super
   end
 
+  # the82 shipping charge in USD
+  def international_shipping_charge weight
+    if weight > 7
+      (18.4 + (weight - 7) * 1.72).round(2)
+    else
+      @shipping_rate ||= [9.0, 9.0, 11.2, 13.0, 14.8, 16.9, 17.8, 18.4]
+      @shipping_rate[weight]
+    end
+  end
 
   def local_shipping_amount
     preferred_local_shipping_charge
@@ -40,9 +48,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]) and (package.order.completed_at.nil? or package.order.completed_at >= Date.parse('2014-11-23'))
     content_items = package.contents
     total_weight = total_weight(content_items)
-    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
-
-    shipping_cost = total_weight * 2 + base_price
+    shipping_cost = international_shipping_charge(total_weight)
     shipping_cost + preferred_local_shipping_charge
   end
 
@@ -51,19 +57,13 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
-
-    shipping_cost = total_weight * 2 + base_price
-    shipping_cost
+    international_shipping_charge(total_weight)
   end
 
   def relaxation_shipping_amount(order)
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    base_price = preferred_international_shipping_charge + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
-
-    shipping_cost = total_weight * 2 + base_price
-    shipping_cost
+    international_shipping_charge(total_weight)
   end
 
   def compute_product_amount(product)
@@ -75,9 +75,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight = weight.ceil
 
-    base_price = preferred_international_shipping_charge
-    shipping_cost = weight * 2 + base_price
-    shipping_cost
+    international_shipping_charge(weight)
   end
 
   def total_weight(contents)
@@ -88,14 +86,5 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight.ceil
   end
 
-  private
-
-  def order_contains_ilbantongwan?(contents)
-    return false
-    ### TODO: set up the below logic if we're selling non-fashion
-    #contents.each do |item|
-    ###check each item's category to see if it's not 목록통관
-    #end
-  end
 end
 
