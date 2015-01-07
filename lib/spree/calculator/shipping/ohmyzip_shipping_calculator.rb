@@ -3,13 +3,6 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   preference :default_weight, :decimal, default: 1
   preference :promotional_shipping_discount, :boolean, default: true
 
-  # the82 shipping charge
-  @@international_shipping_charge = [9.0, 11.2, 13.0, 14.8, 16.9, 17.8, 18.4]
-  93.times do
-    price = @@international_shipping_charge.last + 1.72
-    @@international_shipping_charge.push(price.round(2))
-  end
-
   def self.description
     "Ohmyzip Shipping Calculator"
   end
@@ -18,6 +11,15 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     super
   end
 
+  # the82 shipping charge in USD
+  def international_shipping_charge weight
+    if weight > 7
+      (18.4 + (weight - 7) * 1.72).round(2)
+    else
+      @shipping_rate ||= [9.0, 9.0, 11.2, 13.0, 14.8, 16.9, 17.8, 18.4]
+      @shipping_rate[weight]
+    end
+  end
 
   def local_shipping_amount
     preferred_local_shipping_charge
@@ -46,7 +48,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]) and (package.order.completed_at.nil? or package.order.completed_at >= Date.parse('2014-11-23'))
     content_items = package.contents
     total_weight = total_weight(content_items)
-    shipping_cost = @@international_shipping_charge[total_weight - 1]
+    shipping_cost = international_shipping_charge(total_weight)
     shipping_cost + preferred_local_shipping_charge
   end
 
@@ -55,13 +57,13 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    @@international_shipping_charge[total_weight - 1]
+    international_shipping_charge(total_weight)
   end
 
   def relaxation_shipping_amount(order)
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    @@international_shipping_charge[total_weight - 1]
+    international_shipping_charge(total_weight)
   end
 
   def compute_product_amount(product)
@@ -73,7 +75,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight = weight.ceil
 
-    @@international_shipping_charge[weight - 1]
+    international_shipping_charge(weight)
   end
 
   def total_weight(contents)
