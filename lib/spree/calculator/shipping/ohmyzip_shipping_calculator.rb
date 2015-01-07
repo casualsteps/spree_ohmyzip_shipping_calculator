@@ -46,7 +46,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]) and (package.order.completed_at.nil? or package.order.completed_at >= Date.parse('2014-11-23'))
     content_items = package.contents
     total_weight = total_weight(content_items)
-    shipping_cost = @@international_shipping_charge[total_weight - 1] + (order_contains_ilbantongwan?(package) ? 1.00 : 0)
+    shipping_cost = @@international_shipping_charge[total_weight - 1]
     shipping_cost + preferred_local_shipping_charge
   end
 
@@ -55,15 +55,13 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    shipping_cost = @@international_shipping_charge[total_weight - 1] + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
-    shipping_cost
+    @@international_shipping_charge[total_weight - 1]
   end
 
   def relaxation_shipping_amount(order)
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    shipping_cost = @@international_shipping_charge[total_weight - 1] + (order_contains_ilbantongwan?(order) ? 1.00 : 0)
-    shipping_cost
+    @@international_shipping_charge[total_weight - 1]
   end
 
   def compute_product_amount(product)
@@ -75,8 +73,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight = weight.ceil
 
-    shipping_cost = @@international_shipping_charge[weight - 1]
-    shipping_cost
+    @@international_shipping_charge[weight - 1]
   end
 
   def total_weight(contents)
@@ -87,14 +84,5 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight.ceil
   end
 
-  private
-
-  def order_contains_ilbantongwan?(contents)
-    return false
-    ### TODO: set up the below logic if we're selling non-fashion
-    #contents.each do |item|
-    ###check each item's category to see if it's not 목록통관
-    #end
-  end
 end
 
