@@ -22,7 +22,6 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   def local_shipping_amount(order)
-    #preferred_local_shipping_charge
     order.check_for_gap_banana_products? ? 7 : 0
   end
 
@@ -46,26 +45,22 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # computes in USD
   def compute_package(package)
-    #return 0 if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]) and (package.order.completed_at.nil? or package.order.completed_at >= Date.parse('2014-11-23'))
     if (package.order.item_count > 1 and preferences[:promotional_shipping_discount]) and (package.order.completed_at.nil? or package.order.completed_at >= Date.parse('2014-11-23'))
       return local_shipping_amount(package.order)
     end
     content_items = package.contents
     total_weight = total_weight(content_items)
     shipping_cost = international_shipping_charge(total_weight) + local_shipping_amount(package.order)
-    #shipping_cost + preferred_local_shipping_charge
     shipping_cost
   end
 
   # computes in USD – does NOT include local shipping upgrade
   def compute_amount(order)
-    #return 0 if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
     if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
       return local_shipping_amount(order)
     end
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    #international_shipping_charge(total_weight)
     shipping_cost = international_shipping_charge(total_weight) + local_shipping_amount(order)
     shipping_cost
   end
