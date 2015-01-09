@@ -12,7 +12,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   # the82 shipping charge in USD
-  def international_shipping_charge weight
+  def international_shipping_charge(weight)
     if weight > 7
       (18.4 + (weight - 7) * 1.72).round(2)
     else
@@ -21,8 +21,9 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     end
   end
 
-  def local_shipping_amount(order)
-    order.check_for_gap_banana_products? ? 7 : 0
+  def local_shipping_amount(type)
+    # type can be order or product
+    type.local_shipping_total
   end
 
   def display_string_local_shipping_amount amount = 0
@@ -80,7 +81,8 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight = weight.ceil
 
-    international_shipping_charge(weight)
+    shipping_cost = international_shipping_charge(weight) + local_shipping_amount(product)
+    shipping_cost
   end
 
   def total_weight(contents)
