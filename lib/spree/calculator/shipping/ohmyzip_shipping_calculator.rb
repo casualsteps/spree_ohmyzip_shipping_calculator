@@ -55,7 +55,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     shipping_cost
   end
 
-  # computes in USD – does NOT include local shipping upgrade
+  # computes in USD
   def compute_amount(order)
     if (order.item_count > 1 and preferences[:promotional_shipping_discount]) and (order.completed_at.nil? or order.completed_at >= Date.parse('2014-11-23'))
       return local_shipping_amount(order)
