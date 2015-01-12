@@ -1,7 +1,7 @@
 class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
-  preference :local_shipping_charge, :decimal, default: 0
+  preference :snapshop_shipping_markup, :decimal, default: 1 # dollars
   preference :default_weight, :decimal, default: 1
-  preference :promotional_shipping_discount, :boolean, default: true
+  preference :promotional_shipping_discount, :boolean, default: false
 
   def self.description
     "Ohmyzip Shipping Calculator"
@@ -14,11 +14,12 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   # the82 shipping charge in USD
   def international_shipping_charge(weight)
     if weight > 7
-      (18.4 + (weight - 7) * 1.72).round(2)
+      shipping_charge = (18.4 + (weight - 7) * 1.72).round(2)
     else
       @shipping_rate ||= [9.0, 9.0, 11.2, 13.0, 14.8, 16.9, 17.8, 18.4]
-      @shipping_rate[weight]
+      shipping_charge = @shipping_rate[weight]
     end
+    shipping_charge + preferred_snapshop_shipping_markup
   end
 
   def local_shipping_amount(type)
@@ -37,7 +38,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     presentation_currency = Spree::Config[:presentation_currency] if Spree::Config[:presentation_currency] != nil
     @rate = if @rate then @rate else Spree::CurrencyRate.find_by(target_currency: presentation_currency) end
     display_amount = Spree::Money.new(@rate.convert_to_won(amount).amount, { currency: presentation_currency })
-    preferred_local_shipping_charge == 0 ? "기본" : "+ <strong>#{display_amount}</strong>".html_safe
+    display_amount
   end
 
   def available?(package)
