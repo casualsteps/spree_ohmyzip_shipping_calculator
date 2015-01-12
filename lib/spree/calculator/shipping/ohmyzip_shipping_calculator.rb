@@ -51,8 +51,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     end
     content_items = package.contents
     total_weight = total_weight(content_items)
-    shipping_cost = international_shipping_charge(total_weight) + local_shipping_amount(package.order)
-    shipping_cost
+    international_shipping_charge(total_weight) + local_shipping_amount(package.order)
   end
 
   # computes in USD
@@ -62,8 +61,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     end
     content_items = order.line_items
     total_weight = total_weight(content_items)
-    shipping_cost = international_shipping_charge(total_weight) + local_shipping_amount(order)
-    shipping_cost
+    international_shipping_charge(total_weight) + local_shipping_amount(order)
   end
 
   def relaxation_shipping_amount(order)
@@ -81,8 +79,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     weight = weight > 0.0 ? weight / 100 : preferred_default_weight
     weight = weight.ceil
 
-    shipping_cost = international_shipping_charge(weight) + local_shipping_amount(product)
-    shipping_cost
+    international_shipping_charge(weight) + local_shipping_amount(product)
   end
 
   def total_weight(contents)
@@ -92,6 +89,4 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     end
     weight.ceil
   end
-
 end
-
