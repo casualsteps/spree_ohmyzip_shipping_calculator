@@ -33,14 +33,6 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     @rate.convert_to_won(amount).amount.ceil.to_s
   end
 
-  # should display in KRW
-  def display_local_shipping_amount
-    presentation_currency = Spree::Config[:presentation_currency] if Spree::Config[:presentation_currency] != nil
-    @rate = if @rate then @rate else Spree::CurrencyRate.find_by(target_currency: presentation_currency) end
-    display_amount = Spree::Money.new(@rate.convert_to_won(amount).amount, { currency: presentation_currency })
-    display_amount
-  end
-
   def available?(package)
     true
   end
