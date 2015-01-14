@@ -22,9 +22,30 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     shipping_charge + preferred_snapshop_shipping_markup
   end
 
-  def local_shipping_amount(type)
-    # type can be order or product
-    type.local_shipping_total
+  def local_shipping_amount(product_or_order)
+    # get an array of products to iterate on
+    products = case product_or_order
+      when Spree::Product then [product_or_order]
+      when Spree::Order then product_or_order.line_items.map(&:product)
+    end
+
+    return nil if products.empty?
+
+    products_by_merchant = products.group_by { |p| p.merchant }
+    local_shipping_total = 0
+    products_by_merchant.map do |merchant, products|
+      merchant_total = products.sum(&:price).to_f
+      case merchant
+        when "gap", "bananarepublic"
+          local_shipping_total += 7
+        when "ssense"
+          0
+          # ssense local shipping is free for now. Use the code below if they change it later
+          local_shipping_total += 12 if merchant_total <= 200
+      end
+    end
+
+    local_shipping_total
   end
 
   def available?(package)
