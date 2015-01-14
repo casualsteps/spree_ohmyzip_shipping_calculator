@@ -27,12 +27,6 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     type.local_shipping_total
   end
 
-  def display_string_local_shipping_amount amount = 0
-    presentation_currency = Spree::Config[:presentation_currency] if Spree::Config[:presentation_currency] != nil
-    @rate = if @rate then @rate else Spree::CurrencyRate.find_by(target_currency: presentation_currency) end
-    @rate.convert_to_won(amount).amount.ceil.to_s
-  end
-
   def available?(package)
     true
   end
