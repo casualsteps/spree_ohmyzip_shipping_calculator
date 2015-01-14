@@ -39,9 +39,10 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
         when "gap", "bananarepublic"
           local_shipping_total += 7
         when "ssense"
-          0
-          # ssense local shipping is free for now. Use the code below if they change it later
-          local_shipping_total += 12 if merchant_total <= 200
+          # ssense local shipping is free for now. 
+          # Use the code below if they change it later:
+          #
+          #local_shipping_total += 12 if merchant_total <= 200
       end
     end
 
