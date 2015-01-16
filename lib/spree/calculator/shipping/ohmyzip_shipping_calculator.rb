@@ -24,9 +24,16 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   def local_shipping_amount(product_or_order)
     # get an array of products to iterate on
-    products = case product_or_order
-      when Spree::Product then [product_or_order]
-      when Spree::Order then product_or_order.line_items.map(&:product)
+    products = []
+    case product_or_order
+      when Spree::Product
+        products.push product_or_order
+      when Spree::Order
+        product_or_order.line_items.each {|li|
+          for i in 0..li.quantity-1
+            products.push li.product
+          end
+        }
     end
 
     return nil if products.empty?
@@ -38,6 +45,8 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
       case merchant
         when "gap", "bananarepublic"
           local_shipping_total += 7
+        when "footlocker"
+          local_shipping_total += 7.99 + ((products.count-1) * 1.99)
         when "ssense"
           # ssense local shipping is free for now. 
           # Use the code below if they change it later:
