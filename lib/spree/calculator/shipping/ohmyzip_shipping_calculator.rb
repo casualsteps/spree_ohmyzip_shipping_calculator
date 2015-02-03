@@ -13,12 +13,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # the82 shipping charge in USD
   def international_shipping_charge(weight)
-    if weight > 7
-      shipping_charge = (18.4 + (weight - 7) * 1.72).round(2)
-    else
-      @shipping_rate ||= [9.0, 9.0, 11.2, 13.0, 14.8, 16.9, 17.8, 18.4]
-      shipping_charge = @shipping_rate[weight]
-    end
+    shipping_charge = (9 + 2 * weight).round(2)
     shipping_charge + preferred_snapshop_shipping_markup
   end
 
