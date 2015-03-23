@@ -43,6 +43,8 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
         #
         # total += 12 if merchant_total <= 200
         total
+      else
+        total
       end
     end
   end
