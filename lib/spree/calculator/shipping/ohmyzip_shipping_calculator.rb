@@ -110,7 +110,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   private
 
   def default_weight(weight)
-    weight > 0.0 ? weight / 100 : preferred_default_weight
+    weight > 0.0 ? weight : preferred_default_weight
   end
 
   def compute_product_weight(product)
