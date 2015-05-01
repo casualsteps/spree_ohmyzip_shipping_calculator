@@ -13,7 +13,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # the82 shipping charge in USD
   def international_shipping_charge(weight)
-    shipping_charge = (9 + 2 * weight).round(2)
+    shipping_charge = (11 + 2 * weight).round(2)
     shipping_charge + preferred_snapshop_shipping_markup
   end
 
@@ -31,7 +31,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     return 0 if products.empty?
 
     products.group_by(&:merchant).inject(0) do |total, (merchant, products)|
-      merchant_total = products.sum(&:price).to_f
+      #merchant_total = products.sum(&:price).to_f
       case merchant
       when "gap", "bananarepublic"
         total += 7
