@@ -13,7 +13,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # the82 shipping charge in USD
   def international_shipping_charge(weight)
-    shipping_charge = (11 + 2 * weight).round(2)
+    shipping_charge = (9 + 2 * weight).round(2)
     shipping_charge + preferred_snapshop_shipping_markup
   end
 
