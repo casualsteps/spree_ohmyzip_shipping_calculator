@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_ohmyzip_shipping_calculator'
-  s.version     = '2.2.1'
+  s.version     = '2.2.2'
   s.summary     = 'A shipping calculator for the Korean package forwarding company Ohmyzip'
   s.required_ruby_version = '>= 1.9.3'
 
