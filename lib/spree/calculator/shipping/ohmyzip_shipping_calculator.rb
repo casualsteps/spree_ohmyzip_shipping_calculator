@@ -23,7 +23,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     when Spree::Product
       products.push product_or_order
     when Spree::Order
-      product_or_order.line_items.each do |li|
+      product_or_order.line_items.includes(variant: :product).each do |li|
         li.quantity.times { products.push li.product }
       end
     end
@@ -54,19 +54,21 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   # computes in USD
-  def compute_package(package)
-    if (package.order.item_count > 1 && preferences[:promotional_shipping_discount]) && (package.order.completed_at.nil? || package.order.completed_at >= Date.parse('2014-11-23'))
-      return local_shipping_amount(package.order)
+  def compute(order, contents)
+    if (order.item_count > 1 && preferences[:promotional_shipping_discount]) && (order.completed_at.nil? || order.completed_at >= Date.parse('2014-11-23'))
+      return local_shipping_amount(order)
     end
-    international_shipping_charge_for_items(package.contents) + local_shipping_amount(package.order)
+    international_shipping_charge_for_items(contents.includes(:variant)) + local_shipping_amount(order)
+  end
+
+  # computes in USD
+  def compute_package(package)
+    compute(package.order, package.contents)
   end
 
   # computes in USD
   def compute_amount(order)
-    if (order.item_count > 1 && preferences[:promotional_shipping_discount]) && (order.completed_at.nil? || order.completed_at >= Date.parse('2014-11-23'))
-      return local_shipping_amount(order)
-    end
-    international_shipping_charge_for_items(order.line_items) + local_shipping_amount(order)
+    compute(order, order.line_items)
   end
 
   def international_shipping_charge_for_items(content_items)
