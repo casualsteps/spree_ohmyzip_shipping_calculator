@@ -54,7 +54,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   # computes in USD
-  def compute(order, contents)
+  def _compute(order, contents)
     if (order.item_count > 1 && preferences[:promotional_shipping_discount]) && (order.completed_at.nil? || order.completed_at >= Date.parse('2014-11-23'))
       return local_shipping_amount(order)
     end
@@ -63,12 +63,12 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
 
   # computes in USD
   def compute_package(package)
-    compute(package.order, package.contents)
+    _compute(package.order, package.contents)
   end
 
   # computes in USD
   def compute_amount(order)
-    compute(order, order.line_items)
+    _compute(order, order.line_items)
   end
 
   def international_shipping_charge_for_items(content_items)
