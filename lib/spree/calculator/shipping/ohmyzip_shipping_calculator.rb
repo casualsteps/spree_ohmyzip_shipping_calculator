@@ -80,29 +80,6 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
     international_shipping_charge_for_items(order.line_items)
   end
 
-  def compute_product_amount(product)
-    weight = compute_product_weight(product)
-    international_shipping_charge(weight) + local_shipping_amount(product)
-  end
-  
-  def show_shipping_charge(location, currency, product)
-    case location
-    when "local"
-      shipping_cost = local_shipping_amount(product)
-    when "international"
-      weight = compute_product_weight(product)
-      shipping_cost = international_shipping_charge(weight)
-    else
-      raise "Unsupported location value!"
-    end
-    if (currency == "KRW")
-      rate = Spree::CurrencyRate.find_by(target_currency: currency)
-      return Spree::Money.new(rate.convert_to_won(shipping_cost).amount, { currency: currency }).to_html
-    elsif (currency == "USD")
-      return Spree::Money.new(shipping_cost, { currency: currency }).to_html
-    end
-  end
-
   def total_weight(contents)
     contents.inject(0) do |weight, item|
       weight += item.quantity * default_weight(item.variant.weight)
@@ -116,11 +93,7 @@ class Spree::Calculator::Shipping::Ohmyzip < Spree::ShippingCalculator
   end
 
   def compute_product_weight(product)
-    weight = if product.variants.present?
-      product.variants.maximum(:weight)
-    else
-      product.master.weight
-    end
+    weight = product.variants_including_master.maximum(:weight)
     default_weight(weight).ceil
   end
 end
